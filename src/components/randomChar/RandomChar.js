@@ -7,11 +7,11 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 const RandomChar = () => {
-  const marvelService = useMemo(() => new MarvelService(), []);
-
   const [char, setChar] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const marvelService = useMemo(() => new MarvelService(), []);
 
   const onCharLoaded = useCallback(
     (char) => {
@@ -27,9 +27,13 @@ const RandomChar = () => {
   }, [setLoading, setError]);
 
   const updateChar = useCallback(() => {
+    if (error) setError(false);
+
+    setLoading(true);
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+
     marvelService.getCharacter(id).then(onCharLoaded).catch(onError);
-  }, [marvelService, onCharLoaded, onError]);
+  }, [marvelService, onCharLoaded, onError, error]);
 
   useEffect(() => {
     updateChar();
@@ -51,7 +55,7 @@ const RandomChar = () => {
           Do you want to get to know him better?
         </p>
         <p className="randomchar__title">Or choose another one</p>
-        <button className="button button__main">
+        <button className="button button__main" onClick={updateChar}>
           <div className="inner">try it</div>
         </button>
         <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
@@ -63,9 +67,20 @@ const RandomChar = () => {
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
 
+  const isImageNotAvailable = thumbnail.includes('image_not_available');
+
+  const imageStyle = {
+    objectFit: isImageNotAvailable ? 'contain' : 'cover',
+  };
+
   return (
     <div className="randomchar__block">
-      <img src={thumbnail} alt="Random character" className="randomchar__img" />
+      <img
+        src={thumbnail}
+        alt="Random character"
+        className="randomchar__img"
+        style={imageStyle}
+      />
       <div className="randomchar__info">
         <p className="randomchar__name">{name}</p>
         <p className="randomchar__descr">{description}</p>
