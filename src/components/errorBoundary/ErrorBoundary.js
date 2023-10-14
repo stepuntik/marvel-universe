@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
+import { Component } from 'react';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
-function ErrorBoundary({ children }) {
-  const [error, setError] = useState(null);
-
-  const resetError = () => {
-    setError(null);
+class ErrorBoundary extends Component {
+  state = {
+    error: false,
   };
 
-  if (error) {
-    return (
-      <div>
-        <ErrorMessage />
-        <p>{error.toString()}</p>
-        <button onClick={resetError}>Try Again</button>
-      </div>
-    );
+  componentDidCatch(error, errorInfo) {
+    console.log(error, errorInfo);
+    this.setState({
+      error: true,
+    });
   }
 
-  return children;
+  render() {
+    if (this.state.error) {
+      return <ErrorMessage />;
+    }
+
+    return this.props.children;
+  }
 }
 
 export default ErrorBoundary;

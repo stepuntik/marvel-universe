@@ -1,97 +1,104 @@
-import './charList.scss';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import MarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
+import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
-const CharList = ({ onCharSelected }) => {
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+import './charList.scss';
+import useMarvelService from '../../services/MarvelService';
+
+const CharList = (props) => {
+  const [charList, setCharList] = useState([]);
   const [newItemLoading, setNewItemLoading] = useState(false);
   const [offset, setOffset] = useState(210);
   const [charEnded, setCharEnded] = useState(false);
 
-  const marvelService = useMemo(() => new MarvelService(), []);
-
-  const onCharListLoaded = useCallback((newCharList) => {
-    if (newCharList.length < 9) {
-      setCharEnded(true);
-    }
-
-    setCharacters((prevCharList) => [...prevCharList, ...newCharList]);
-    setLoading(false);
-    setNewItemLoading(false);
-    setOffset((prevOffset) => prevOffset + 9);
-  }, []);
-
-  const onError = useCallback(() => {
-    setLoading(false);
-    setError(true);
-  }, []);
-
-  const onRequest = useCallback(
-    (offset) => {
-      setNewItemLoading(true);
-
-      marvelService
-        .getAllCharacters(offset)
-        .then(onCharListLoaded)
-        .catch(onError);
-    },
-    [marvelService, onCharListLoaded, onError]
-  );
+  const { loading, error, getAllCharacters } = useMarvelService();
 
   useEffect(() => {
-    onRequest();
-  }, [onRequest]);
+    onRequest(offset, true);
+  }, []);
+
+  const onRequest = (offset, initial) => {
+    initial ? setNewItemLoading(false) : setNewItemLoading(true);
+    getAllCharacters(offset).then(onCharListLoaded);
+  };
+
+  const onCharListLoaded = (newCharList) => {
+    setCharList((prevCharList) => [...prevCharList, ...newCharList]);
+    setNewItemLoading(false);
+    setOffset((prevOffset) => prevOffset + 9);
+    setCharEnded(newCharList.length < 9);
+  };
+
+  const itemRefs = useRef([]);
+
+  const focusOnItem = (id) => {
+    itemRefs.current.forEach((item) =>
+      item.classList.remove('char__item_selected')
+    );
+    itemRefs.current[id].classList.add('char__item_selected');
+    itemRefs.current[id].focus();
+  };
+
+  function renderItems(arr) {
+    const items = arr.map((item, i) => {
+      let imgStyle = { objectFit: 'cover' };
+      if (
+        item.thumbnail ===
+        'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
+      ) {
+        imgStyle = { objectFit: 'unset' };
+      }
+
+      return (
+        <li
+          className="char__item"
+          tabIndex={0}
+          ref={(el) => (itemRefs.current[i] = el)}
+          key={item.id}
+          onClick={() => {
+            props.onCharSelected(item.id);
+            focusOnItem(i);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              props.onCharSelected(item.id);
+              focusOnItem(i);
+            }
+          }}
+        >
+          <img src={item.thumbnail} alt={item.name} style={imgStyle} />
+          <div className="char__name">{item.name}</div>
+        </li>
+      );
+    });
+    return <ul className="char__grid">{items}</ul>;
+  }
+
+  const items = renderItems(charList);
 
   const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
+  const spinner = loading && !newItemLoading ? <Spinner /> : null;
 
   return (
     <div className="char__list">
       {errorMessage}
       {spinner}
-      {!(loading || error) ? (
-        <>
-          <ul className="char__grid">
-            {characters.map(({ thumbnail, name, id }) => {
-              const isImageNotAvailable = thumbnail.includes(
-                'image_not_available'
-              );
-              const imageStyle = {
-                objectFit: isImageNotAvailable ? 'contain' : 'cover',
-              };
-
-              return (
-                <li
-                  className="char__item"
-                  key={id}
-                  onClick={() => {
-                    onCharSelected(id);
-                  }}
-                >
-                  <img src={thumbnail} alt={name} style={imageStyle} />
-                  <div className="char__name">{name}</div>
-                </li>
-              );
-            })}
-          </ul>
-          <button
-            className="button button__main button__long"
-            disabled={newItemLoading}
-            onClick={() => {
-              onRequest(offset);
-            }}
-            style={{ display: charEnded ? 'none' : 'block' }}
-          >
-            <div className="inner">load more</div>
-          </button>
-        </>
-      ) : null}
+      {items}
+      <button
+        className="button button__main button__long"
+        disabled={newItemLoading}
+        style={{ display: charEnded ? 'none' : 'block' }}
+        onClick={() => onRequest(offset)}
+      >
+        <div className="inner">load more</div>
+      </button>
     </div>
   );
+};
+
+CharList.propTypes = {
+  onCharSelected: PropTypes.func.isRequired,
 };
 
 export default CharList;
