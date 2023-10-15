@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import './charList.scss';
 import useMarvelService from '../../services/MarvelService';
+import './charList.scss';
 
 const CharList = (props) => {
   const [charList, setCharList] = useState([]);
@@ -16,7 +16,7 @@ const CharList = (props) => {
 
   useEffect(() => {
     onRequest(offset, true);
-  }, []);
+  }, []); //eslint-disable-line
 
   const onRequest = (offset, initial) => {
     initial ? setNewItemLoading(false) : setNewItemLoading(true);
@@ -29,10 +29,10 @@ const CharList = (props) => {
       ended = true;
     }
 
-    setCharList((prevCharList) => [...prevCharList, ...newCharList]);
-    setNewItemLoading(false);
-    setOffset((prevOffset) => prevOffset + 9);
-    setCharEnded(ended);
+    setCharList((charList) => [...charList, ...newCharList]);
+    setNewItemLoading((newItemLoading) => false);
+    setOffset((offset) => offset + 9);
+    setCharEnded((charEnded) => ended);
   };
 
   const itemRefs = useRef([]);

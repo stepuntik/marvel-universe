@@ -7,15 +7,12 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
+import { Link } from 'react-router-dom';
 
 const CharInfo = ({ charId }) => {
   const [char, setChar] = useState(null);
 
   const { loading, error, getCharacter, clearError } = useMarvelService();
-
-  useEffect(() => {
-    updateChar();
-  }, [charId]);
 
   const updateChar = () => {
     if (!charId) {
@@ -25,6 +22,10 @@ const CharInfo = ({ charId }) => {
     clearError();
     getCharacter(charId).then(onCharLoaded);
   };
+
+  useEffect(() => {
+    updateChar();
+  }, [charId]); //eslint-disable-line
 
   const onCharLoaded = (char) => {
     setChar(char);
@@ -77,15 +78,29 @@ const View = ({ char }) => {
       </div>
       <div className="char__comics">Comics:</div>
       <ul className="char__comics-list">
-        {comics.length > 0 ? null : 'There is no comics with this character'}
+        {comics.length > 0 ? null : 'No comics with this character found'}
         {comics.map((item, i) => {
           // eslint-disable-next-line
           if (i > 9) return;
-          return (
-            <li key={i} className="char__comics-item">
-              {item.name}
-            </li>
-          );
+
+          if (item.resourceURI) {
+            let comicId;
+
+            const valueAfterComics = item.resourceURI.match(/comics\/(\d+)/);
+
+            if (valueAfterComics) {
+              comicId = valueAfterComics[1];
+            }
+            return (
+              <Link
+                key={comicId}
+                to={`/comics/${comicId}`}
+                className="char__comics-item"
+              >
+                <li>{item.name}</li>
+              </Link>
+            );
+          } else return null;
         })}
       </ul>
     </>

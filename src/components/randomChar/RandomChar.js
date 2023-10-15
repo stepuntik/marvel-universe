@@ -13,12 +13,12 @@ const RandomChar = () => {
 
   useEffect(() => {
     updateChar();
-    const timerId = setInterval(updateChar, 60000);
+    const timerId = setInterval(updateChar, 600000);
 
     return () => {
       clearInterval(timerId);
     };
-  }, []);
+  }, []); //eslint-disable-line
 
   const onCharLoaded = (char) => {
     setChar(char);
@@ -58,12 +58,12 @@ const RandomChar = () => {
 const View = ({ char }) => {
   const { name, thumbnail, homepage, wiki, comics } = char;
 
-  let description;
+  let comicAppearance;
 
   if (comics.length === 0) {
-    description = `Hmm, ${name} did not appear in any comics! That's odd...`;
+    comicAppearance = `Hmm, ${name} did not appear in any comics! That's odd...`;
   } else {
-    description = `Nice! ${name} appeared in ${comics.length} Marvel comics!`;
+    comicAppearance = `Nice! ${name} appeared in ${comics.length} Marvel comics!`;
   }
 
   let imgStyle = { objectFit: 'cover' };
@@ -84,7 +84,7 @@ const View = ({ char }) => {
       />
       <div className="randomchar__info">
         <p className="randomchar__name">{name}</p>
-        <p className="randomchar__descr">{description}</p>
+        <p className="randomchar__descr">{comicAppearance}</p>
         <div className="randomchar__btns">
           <a href={homepage} className="button button__main">
             <div className="inner">homepage</div>
