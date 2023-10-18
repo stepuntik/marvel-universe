@@ -43,7 +43,7 @@ const RandomChar = () => {
         <p className="randomchar__title">
           Random character for today!
           <br />
-          Do you want to get to know him better?
+          Do you want to get to know them better?
         </p>
         <p className="randomchar__title">Or choose another one</p>
         <button onClick={updateChar} className="button button__main">
@@ -63,7 +63,8 @@ const View = ({ char }) => {
   if (comics.length === 0) {
     comicAppearance = `Hmm, ${name} did not appear in any comics! That's odd...`;
   } else {
-    comicAppearance = `Nice! ${name} appeared in ${comics.length} Marvel comics!`;
+    const comicWord = comics.length > 1 ? 'comics' : 'comic';
+    comicAppearance = `Nice! ${name} appeared in ${comics.length} Marvel ${comicWord}!`;
   }
 
   let imgStyle = { objectFit: 'cover' };

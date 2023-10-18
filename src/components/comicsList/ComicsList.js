@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
+import './comicsList.scss';
+
 const ComicsList = () => {
   const [comicsList, setComicsList] = useState([]);
-  const [newItemLoading, setNewItemLoading] = useState(false);
+  const [newItemLoading, setnewItemLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [comicsEnded, setComicsEnded] = useState(false);
 
@@ -18,17 +20,17 @@ const ComicsList = () => {
   }, []); //eslint-disable-line
 
   const onRequest = (offset, initial) => {
-    initial ? setNewItemLoading(false) : setNewItemLoading(true);
-    getAllComics(offset).then(onComicsLoaded);
+    initial ? setnewItemLoading(false) : setnewItemLoading(true);
+    getAllComics(offset).then(onComicsListLoaded);
   };
 
-  const onComicsLoaded = (newComicsList) => {
+  const onComicsListLoaded = (newComicsList) => {
     let ended = false;
     if (newComicsList.length < 8) {
       ended = true;
     }
     setComicsList([...comicsList, ...newComicsList]);
-    setNewItemLoading(false);
+    setnewItemLoading(false);
     setOffset(offset + 8);
     setComicsEnded(ended);
   };

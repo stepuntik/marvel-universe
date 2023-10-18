@@ -19,6 +19,11 @@ const useMarvelService = () => {
     return _transformCharacter(res.data.results[0]);
   };
 
+  const getCharacterByName = async (name) => {
+    const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    return res.data.results.map(_transformCharacter);
+  };
+
   const getAllComics = async (offset = 0) => {
     const res = await request(
       `${_apiBase}comics?orderBy=issueNumber&limit=8&offset=${offset}&${_apiKey}`
@@ -38,6 +43,9 @@ const useMarvelService = () => {
       description: char.description
         ? `${char.description.slice(0, 210)}...`
         : 'There is no description for this character',
+      fullDescription: char.description
+        ? `${char.description}`
+        : 'There is no description for this character',
       thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
       homepage: char.urls[0].url,
       wiki: char.urls[1].url,
@@ -49,7 +57,10 @@ const useMarvelService = () => {
     return {
       id: comics.id,
       title: comics.title,
-      writers: comics.creators.items.map((creator) => creator.name).join(', '),
+      writers:
+        comics.creators.items.length > 0
+          ? comics.creators.items.map((creator) => creator.name).join(', ')
+          : 'Unknown',
       description: comics.description || 'There is no description',
       originalSource: comics.urls[0].url
         ? `${comics.urls[0].url}`
@@ -68,6 +79,7 @@ const useMarvelService = () => {
     clearError,
     getAllCharacters,
     getCharacter,
+    getCharacterByName,
     getAllComics,
     getComic,
   };
