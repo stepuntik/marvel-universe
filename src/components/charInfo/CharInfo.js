@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
+import setContent from '../../utils/setContent';
 
 import './charInfo.scss';
-import { Link } from 'react-router-dom';
 
 const CharInfo = ({ charId }) => {
   const [char, setChar] = useState(null);
 
-  const { loading, error, getCharacter, clearError } = useMarvelService();
+  const { getCharacter, clearError, process, setProcess } = useMarvelService();
 
   const updateChar = () => {
     if (!charId) {
@@ -20,34 +18,28 @@ const CharInfo = ({ charId }) => {
     }
 
     clearError();
-    getCharacter(charId).then(onCharLoaded);
+    getCharacter(charId)
+      .then(onCharLoaded)
+      .then(() => setProcess('confirmed'));
   };
 
   useEffect(() => {
     updateChar();
-  }, [charId]); //eslint-disable-line
+  }, [charId]); //eslint-disable-line react-hooks/exhaustive-deps
 
   const onCharLoaded = (char) => {
     setChar(char);
   };
 
-  const skeleton = char || loading || error ? null : <Skeleton />;
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error || !char) ? <View char={char} /> : null;
-
   return (
     <div className="char__info char__info--fixed">
-      {skeleton}
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(process, View, char)}
     </div>
   );
 };
 
-const View = ({ char }) => {
-  const { name, thumbnail, homepage, wiki, comics } = char;
+const View = ({ data }) => {
+  const { id, name, thumbnail, comics } = data;
 
   let imgStyle = { objectFit: 'cover' };
   if (
@@ -64,19 +56,15 @@ const View = ({ char }) => {
         <div>
           <div className="char__info-name">{name}</div>
           <div className="char__btns">
-            <a href={homepage} className="button button__main">
+            <Link to={`/characters/${id}`} className="button button__main">
               <div className="inner">homepage</div>
-            </a>
-            <a href={wiki} className="button button__secondary">
-              <div className="inner">Wiki</div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
-      <div className="char__descr">
+      <h3 className="char__comics">
         See what comics you can find me in below!
-      </div>
-      <div className="char__comics">Comics:</div>
+      </h3>
       <ul className="char__comics-list">
         {comics.length > 0 ? null : 'No comics with this character found'}
         {comics.map((item, i) => {

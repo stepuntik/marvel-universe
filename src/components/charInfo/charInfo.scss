@@ -47,11 +47,11 @@
     font-weight: bold;
     font-size: 18px;
     line-height: 24px;
-    margin-top: 10px;
+    margin-top: 25px;
     &-list {
       position: relative;
       margin-top: 10px;
-      max-height: 200px;
+      max-height: 250px;
       overflow: auto;
     }
     &-item {
@@ -64,7 +64,7 @@
       &:hover {
         background-color: #f0f0f0; // Define your hover background color
         cursor: pointer; // Change the cursor on hover
-        transform: translateY(-5px);
+        transform: translateY(-3px);
       }
     }
   }

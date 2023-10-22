@@ -2,10 +2,28 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
+
+import InfiniteScroll from 'react-infinite-scroller';
+
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './comicsList.scss';
+
+const setContent = (process, Component, newItemLoading) => {
+  switch (process) {
+    case 'waiting':
+      return <Spinner />;
+    case 'loading':
+      return newItemLoading ? <Component /> : null;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorMessage />;
+    default:
+      throw new Error('Unexpected process state');
+  }
+};
 
 const ComicsList = () => {
   const [comicsList, setComicsList] = useState([]);
@@ -13,15 +31,17 @@ const ComicsList = () => {
   const [offset, setOffset] = useState(0);
   const [comicsEnded, setComicsEnded] = useState(false);
 
-  const { loading, error, getAllComics } = useMarvelService();
+  const { getAllComics, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     onRequest(offset, true);
-  }, []); //eslint-disable-line
+  }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
   const onRequest = (offset, initial) => {
     initial ? setnewItemLoading(false) : setnewItemLoading(true);
-    getAllComics(offset).then(onComicsListLoaded);
+    getAllComics(offset)
+      .then(onComicsListLoaded)
+      .then(() => setProcess('confirmed'));
   };
 
   const onComicsListLoaded = (newComicsList) => {
@@ -35,7 +55,7 @@ const ComicsList = () => {
     setComicsEnded(ended);
   };
 
-  function renderItems(arr) {
+  const renderItems = (arr) => {
     const items = arr.map((item, i) => {
       return (
         <li className="comics__item" key={i}>
@@ -53,27 +73,21 @@ const ComicsList = () => {
     });
 
     return <ul className="comics__grid">{items}</ul>;
-  }
-
-  const items = renderItems(comicsList);
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading && !newItemLoading ? <Spinner /> : null;
+  };
 
   return (
-    <div className="comics__list">
-      {errorMessage}
-      {spinner}
-      {items}
-      <button
-        disabled={newItemLoading}
-        style={{ display: comicsEnded ? 'none' : 'block' }}
-        className="button button__main button__long"
-        onClick={() => onRequest(offset)}
-      >
-        <div className="inner">load more</div>
-      </button>
-    </div>
+    <InfiniteScroll
+      pageStart={0}
+      loadMore={() => onRequest(offset)}
+      hasMore={!comicsEnded}
+      initialLoad={false}
+      loader={<Spinner key={0} />}
+      useWindow={true}
+    >
+      <ul className="comics__list">
+        {setContent(process, () => renderItems(comicsList), newItemLoading)}
+      </ul>
+    </InfiniteScroll>
   );
 };
 

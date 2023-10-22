@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
 import './singleComicLayout.scss';
@@ -13,6 +13,12 @@ const SingleComicLayout = ({ data }) => {
     language,
     price,
   } = data;
+
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="single-comic">
@@ -31,9 +37,9 @@ const SingleComicLayout = ({ data }) => {
           Check out this comic on Marvel's official website!
         </a>
       </div>
-      <Link to="/comics" className="single-comic__link">
-        Back to all comics
-      </Link>
+      <button onClick={goBack} className="single-comic__link">
+        Go back
+      </button>
     </div>
   );
 };
