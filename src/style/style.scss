@@ -9,6 +9,11 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: $dark;
+  color: #fff;
+}
+
 ul,
 li,
 dl {
@@ -52,6 +57,7 @@ input::-webkit-inner-spin-button {
   margin: 0 auto;
   padding: 50px 0 50px 0;
   position: relative;
+  // background-color: #181a1b;
   .bg-decoration {
     position: sticky;
     left: 100%;
