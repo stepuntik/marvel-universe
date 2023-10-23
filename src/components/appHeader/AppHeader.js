@@ -1,8 +1,11 @@
-import { NavLink, Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
 import './appHeader.scss';
 
 const AppHeader = () => {
+  const location = useLocation();
+  const isCharacterRoute = location.pathname.match(/^\/characters\/\d+$/);
+
   return (
     <header className="app__header">
       <h1 className="app__title">
@@ -16,7 +19,7 @@ const AppHeader = () => {
             <NavLink
               end
               style={({ isActive }) => ({
-                color: isActive ? '#9F0013' : 'inherit',
+                color: isActive || isCharacterRoute ? '#9F0013' : 'inherit',
               })}
               to="/"
             >

@@ -12,6 +12,11 @@
       position: sticky;
       top: 1rem;
     }
+    &-category {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
     &-name {
       font-weight: bold;
       font-size: 22px;
@@ -62,8 +67,8 @@
       margin-top: 10px;
 
       &:hover {
-        background-color: #f0f0f0; // Define your hover background color
-        cursor: pointer; // Change the cursor on hover
+        background-color: #f0f0f0;
+        cursor: pointer;
         transform: translateY(-3px);
       }
     }

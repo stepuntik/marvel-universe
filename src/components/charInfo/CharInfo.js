@@ -53,7 +53,7 @@ const View = ({ data }) => {
     <>
       <div className="char__basics">
         <img src={thumbnail} alt={name} style={imgStyle} />
-        <div>
+        <div className="char__info-category">
           <div className="char__info-name">{name}</div>
           <div className="char__btns">
             <Link to={`/characters/${id}`} className="button button__main">
@@ -68,9 +68,6 @@ const View = ({ data }) => {
       <ul className="char__comics-list">
         {comics.length > 0 ? null : 'No comics with this character found'}
         {comics.map((item, i) => {
-          // eslint-disable-next-line
-          if (i > 9) return;
-
           if (item.resourceURI) {
             let comicId;
 
