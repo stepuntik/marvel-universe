@@ -1,6 +1,6 @@
 # Marvel Universe - Information Portal
 
-![Marvel Universe Logo](https://i.ibb.co/fqWDTbx/marvel.png)
+![Marvel Universe Logo](https://i.ibb.co/S5gfZ23/marvel.png)
 
 Marvel Universe is an open-source web application that serves as an information portal for all things Marvel. Whether you're a dedicated comic book fan or just a casual admirer of the Marvel Universe, this project offers a rich source of data, keeping you up to date with your favorite characters and comics. Explore characters, comics, and much more in one convenient place.
 
