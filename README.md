@@ -12,8 +12,6 @@ Marvel Universe is an open-source web application that serves as an information 
 
 - **User-Friendly Interface**: A clean and intuitive user interface makes navigation a breeze.
 
-- **Responsive Design**: Marvel Universe is designed to work seamlessly on all devices, from desktops to mobile phones.
-
 ## This project is live and accessible on GitHub Pages! Explore it directly at [Marvel Universe](https://stepuntik.github.io/marvel-universe/)
 
 ## Usage
