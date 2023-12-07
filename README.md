@@ -1,6 +1,6 @@
 # Marvel Universe - Information Portal
 
-## This project is live and accessible on GitHub Pages! Explore it [here](https://stepuntik.github.io/marvel-universe/)!
+This project is live and accessible on GitHub Pages! Explore it [here](https://stepuntik.github.io/marvel-universe/)!
 
 ![Marvel Universe Logo](https://imgpile.com/images/DjV2Jl.png)
 
